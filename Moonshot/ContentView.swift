@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+struct User: Codable {
+    let name: String
+    let address: Address
+}
+
+struct Address: Codable {
+    let street: String
+    let city: String
+}
+
 struct MainView: View {
     
     var body: some View {
@@ -19,7 +29,80 @@ struct MainView: View {
 }
 
 struct ContentView: View {
+//    let layout = [
+//        GridItem(.adaptive(minimum: 80, maximum: 120))
+//    ]
+    let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
+    let missions: [Mission] = Bundle.main.decode("missions.json")
+    
+    let columns = [
+        GridItem(.adaptive(minimum: 150))
+    ]
+    
+    
+    
     var body: some View {
+        
+        NavigationView {
+            ScrollView {
+                LazyVGrid(columns: columns) {
+                    ForEach(missions) { mission in
+                        NavigationLink {
+                            Text("Detail View")
+                        } label: {
+                            VStack {
+                                Image(mission.image)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                    .padding()
+//                                    .background(.red)
+                                VStack {
+                                    Text(mission.displayName)
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+
+                                    Text(mission.formattedLaunchDate)
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.7))
+                                    Spacer()
+                                }
+                                .padding(.vertical)
+                                .frame(maxWidth: .infinity)
+//                                .background(.thinMaterial)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+//                            .overlay(
+//                                RoundedRectangle(cornerRadius: 10)
+//                                    .stroke(.lightBackground)
+//                            )
+                            .background(.ultraThinMaterial)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                    }
+                }
+                .padding([.horizontal, .bottom])
+            }
+            .navigationTitle("Moonshot")
+//                .background(.darkBackground)
+            .preferredColorScheme(.dark)
+            .background(
+                VStack {
+                    GeometryReader { geo in
+                        Image("background")
+                            .resizable()
+                            .scaledToFit()
+                            .rotationEffect(.degrees(180))
+                    }
+                        .ignoresSafeArea()
+                    LinearGradient(colors: [.black, Color(red: 0.15, green: 0.15, blue: 0.15)], startPoint: .top, endPoint: .bottom)
+                        .ignoresSafeArea()
+                }
+                
+                
+            )
+        }
+        
 //        GeometryReader { geo in
 //            Image("example2")
 //                .resizable()
@@ -27,35 +110,45 @@ struct ContentView: View {
 //                .frame(width: geo.size.width * 0.9)
 //                .frame(width: geo.size.width, height: geo.size.height)
 //        }
-        ScrollView(.horizontal) {
-            LazyHStack {
-                ForEach(0..<13) {num in
-                    switch num {
-                    case 0..<10:
-                        Text("\(10-num)")
-                            .font(.system(size:400, weight: .heavy))
-                    case 10:
-                        Text("Ignition...")
-                            .font(.system(size:100, weight: .heavy))
-                            .rotationEffect(.degrees(270))
-                    case 11:
-                        Text("Lift Off!")
-                            .font(.system(size:100, weight: .heavy))
-                            .rotationEffect(.degrees(270))
-                    case 12:
-                        Text("All systems are good...")
-                            .font(.system(size:60, weight: .heavy))
-                            .lineLimit(nil)
-                            .rotationEffect(.degrees(270))
-                            .multilineTextAlignment(.center)
-                    default:
-                        Text("F*")
-                    }
-                    
-                }
-            }
-            
-        }
+        
+//        NavigationView {
+//            List(0..<100) { row in
+//                NavigationLink {
+//                    Text("Detail for row\(row)")
+//                } label: {
+//                    Text("Row \(row)")
+//
+//                }
+//                .navigationTitle("SwiftUI")
+//            }
+//
+//
+//        }
+        
+//        Button("Decode JSON") {
+//            let input = """
+//            {
+//                "name" : "Taylor Swift",
+//                "address" : {
+//                    "street" : "555 Taylor Swift Avenue",
+//                    "city" : "Nashville"
+//                }
+//            }
+//            """
+//            let decoder = JSONDecoder()
+//            let data = Data(input.utf8)
+//            if let user = try? decoder.decode(User.self, from: data) {
+//                print(user.address.city)
+//            }
+//        }
+        
+//        ScrollView() {
+//            LazyVGrid(columns: layout) {
+//                ForEach(0..<1000) {text in
+//                    Text("Row \(text)")
+//                }
+//            }
+//        }
         
     }
 }
