@@ -53,7 +53,7 @@ struct ContentView: View {
                             VStack {
                                 Image(mission.image)
                                     .resizable()
-                                    .scaledToFit()
+                                    .scaledToFill()
                                     .frame(width: 100, height: 100)
                                     .padding()
 //                                    .background(.red)
@@ -69,7 +69,7 @@ struct ContentView: View {
                                 }
                                 .padding(.vertical)
                                 .frame(maxWidth: .infinity)
-//                                .background(.thinMaterial)
+                                .background(.thinMaterial)
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 10))
 //                            .overlay(
@@ -77,7 +77,7 @@ struct ContentView: View {
 //                                    .stroke(.lightBackground)
 //                            )
                             .background(.ultraThinMaterial)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
                     }
                 }
@@ -87,16 +87,20 @@ struct ContentView: View {
 //                .background(.darkBackground)
             .preferredColorScheme(.dark)
             .background(
-                VStack {
+                ZStack {
+                    LinearGradient(colors: [.black, .lightBackground], startPoint: .top, endPoint: .bottom)
+                        .ignoresSafeArea()
                     GeometryReader { geo in
-                        Image("background")
+                        Image("background3")
                             .resizable()
                             .scaledToFit()
                             .rotationEffect(.degrees(180))
+                            .frame(width: geo.size.width)
+//                            .frame(width: geo.size.width)
+
                     }
                         .ignoresSafeArea()
-                    LinearGradient(colors: [.black, Color(red: 0.15, green: 0.15, blue: 0.15)], startPoint: .top, endPoint: .bottom)
-                        .ignoresSafeArea()
+                    
                 }
                 
                 
