@@ -28,16 +28,39 @@ struct MainView: View {
     }
 }
 
+struct Background: View {
+    let isMainPage: Bool
+    
+    var body: some View {
+        ZStack {
+            LinearGradient(colors: [.black, .lightBackground], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+            GeometryReader { geo in
+                Image("background3")
+                    .resizable()
+                    .scaledToFit()
+                    .rotationEffect(.degrees(180))
+                    .frame(width: geo.size.width)
+                    .blur(radius: self.isMainPage ? 0 : 20)
+            }
+            .ignoresSafeArea()
+        }
+    }
+}
+    
 struct ContentView: View {
-//    let layout = [
-//        GridItem(.adaptive(minimum: 80, maximum: 120))
-//    ]
+    
     let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
     let missions: [Mission] = Bundle.main.decode("missions.json")
     
-    let columns = [
-        GridItem(.adaptive(minimum: 150))
-    ]
+    @State private var showingAsList = false
+    
+    var columns: [GridItem] {
+        [
+            GridItem(.adaptive(minimum: showingAsList ? .infinity : 150))
+        ]
+    }
+    
     
     
     
@@ -48,7 +71,7 @@ struct ContentView: View {
                 LazyVGrid(columns: columns) {
                     ForEach(missions) { mission in
                         NavigationLink {
-                            Text("Detail View")
+                            MissionView(mission: mission, astronauts: astronauts)
                         } label: {
                             VStack {
                                 Image(mission.image)
@@ -59,11 +82,11 @@ struct ContentView: View {
 //                                    .background(.red)
                                 VStack {
                                     Text(mission.displayName)
-                                        .font(.headline)
+                                        .font(.headline.monospaced())
                                         .foregroundColor(.white)
 
                                     Text(mission.formattedLaunchDate)
-                                        .font(.caption)
+                                        .font(.caption.monospaced())
                                         .foregroundColor(.white.opacity(0.7))
                                     Spacer()
                                 }
@@ -72,10 +95,6 @@ struct ContentView: View {
                                 .background(.thinMaterial)
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 10))
-//                            .overlay(
-//                                RoundedRectangle(cornerRadius: 10)
-//                                    .stroke(.lightBackground)
-//                            )
                             .background(.ultraThinMaterial)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
@@ -84,75 +103,19 @@ struct ContentView: View {
                 .padding([.horizontal, .bottom])
             }
             .navigationTitle("Moonshot")
-//                .background(.darkBackground)
             .preferredColorScheme(.dark)
-            .background(
-                ZStack {
-                    LinearGradient(colors: [.black, .lightBackground], startPoint: .top, endPoint: .bottom)
-                        .ignoresSafeArea()
-                    GeometryReader { geo in
-                        Image("background3")
-                            .resizable()
-                            .scaledToFit()
-                            .rotationEffect(.degrees(180))
-                            .frame(width: geo.size.width)
-//                            .frame(width: geo.size.width)
-
+            .background(Background(isMainPage: true))
+            .toolbar {
+                Button {
+                    withAnimation {
+                        showingAsList.toggle()
                     }
-                        .ignoresSafeArea()
-                    
+                } label: {
+                    Image(systemName: showingAsList ? "square.grid.2x2" : "list.bullet")
+                        .foregroundColor(.white)
                 }
-                
-                
-            )
+            }
         }
-        
-//        GeometryReader { geo in
-//            Image("example2")
-//                .resizable()
-//                .scaledToFit()
-//                .frame(width: geo.size.width * 0.9)
-//                .frame(width: geo.size.width, height: geo.size.height)
-//        }
-        
-//        NavigationView {
-//            List(0..<100) { row in
-//                NavigationLink {
-//                    Text("Detail for row\(row)")
-//                } label: {
-//                    Text("Row \(row)")
-//
-//                }
-//                .navigationTitle("SwiftUI")
-//            }
-//
-//
-//        }
-        
-//        Button("Decode JSON") {
-//            let input = """
-//            {
-//                "name" : "Taylor Swift",
-//                "address" : {
-//                    "street" : "555 Taylor Swift Avenue",
-//                    "city" : "Nashville"
-//                }
-//            }
-//            """
-//            let decoder = JSONDecoder()
-//            let data = Data(input.utf8)
-//            if let user = try? decoder.decode(User.self, from: data) {
-//                print(user.address.city)
-//            }
-//        }
-        
-//        ScrollView() {
-//            LazyVGrid(columns: layout) {
-//                ForEach(0..<1000) {text in
-//                    Text("Row \(text)")
-//                }
-//            }
-//        }
         
     }
 }
